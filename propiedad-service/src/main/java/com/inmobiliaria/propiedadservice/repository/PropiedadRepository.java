@@ -3,6 +3,5 @@ package com.inmobiliaria.propiedadservice.repository;
 import com.inmobiliaria.propiedadservice.model.Propiedad;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public class PropiedadRepository extends JpaRepository<Propiedad, Long> {
+public interface PropiedadRepository extends JpaRepository<Propiedad, Long> {
 }
-
