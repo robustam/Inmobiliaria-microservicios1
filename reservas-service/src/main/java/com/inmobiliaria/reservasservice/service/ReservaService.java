@@ -1,7 +1,11 @@
 package com.inmobiliaria.reservasservice.service;
 
+import com.inmobiliaria.reservasservice.dto.PropiedadDTO;
+import com.inmobiliaria.reservasservice.dto.UsuarioDTO;
 import com.inmobiliaria.reservasservice.model.Reserva;
 import com.inmobiliaria.reservasservice.repository.IReservaRepository;
+import com.inmobiliaria.reservasservice.repository.client.IPropiedadClient;
+import com.inmobiliaria.reservasservice.repository.client.IUsuarioClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,17 +17,31 @@ public class ReservaService implements IReservaService {
     @Autowired
     private IReservaRepository reservaRepo;
 
-    // Aquí inyectaremos los Clientes Feign (UsuarioClient y PropiedadClient) en el siguiente paso
+    @Autowired
+    private IUsuarioClient usuarioClient; // El puente a Usuarios
+
+    @Autowired
+    private IPropiedadClient propiedadClient; // El puente a Propiedades
 
     @Override
     public String saveReserva(Reserva reserva) {
-        // Lógica futura:
-        // 1. Validar Usuario via Feign
-        // 2. Validar Propiedad via Feign
 
+        // 1. Validamos si el Usuario existe llamando al otro microservicio
+        UsuarioDTO user = usuarioClient.buscarUsuario(reserva.getIdUsuario());
+
+        // 2. Validamos si la Propiedad existe llamando al otro microservicio
+        PropiedadDTO prop = propiedadClient.buscarPropiedad(reserva.getIdPropiedad());
+
+        // 3. Lógica de seguridad
+        if (user == null) return "Error: El usuario no existe.";
+        if (prop == null) return "Error: La propiedad no existe.";
+
+        // 4. Si todo está bien, guardamos
         reserva.setEstado("CONFIRMADA");
         reservaRepo.save(reserva);
-        return "Reserva creada con éxito para la propiedad ID: " + reserva.getIdPropiedad();
+
+        return "Reserva confirmada para " + user.getNombre() +
+                " en la propiedad: " + prop.getDireccion();
     }
 
     @Override
