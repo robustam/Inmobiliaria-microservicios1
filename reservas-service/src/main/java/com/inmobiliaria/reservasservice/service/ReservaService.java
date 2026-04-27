@@ -48,4 +48,11 @@ public class ReservaService implements IReservaService {
     public List<Reserva> getReservas() {
         return reservaRepo.findAll();
     }
+
+    @Override
+    public Reserva findReserva(Long id) {
+        // Buscamos por ID, si no existe devolvemos null
+        return reservaRepo.findById(id).orElse(null);
+    }
+
 }
