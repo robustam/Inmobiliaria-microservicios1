@@ -1,3 +1,12 @@
+package com.inmobiliaria.pagosservice.service.PagoService;
+
+import com.inmobiliaria.pagosservice.dto.ReservaDTO;
+import com.inmobiliaria.pagosservice.model.Pago;
+import com.inmobiliaria.pagosservice.repository.IPagoRepository;
+import com.inmobiliaria.pagosservice.repository.client.IReservaClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 @Service
 public class PagoService {
 
@@ -5,7 +14,7 @@ public class PagoService {
     private IPagoRepository pagoRepo;
 
     @Autowired
-    private IReservaClient reservaClient; // El cliente Feign que crearás
+    private IReservaClient reservaClient;
 
     public String procesarPago(Pago pago) {
         // 1. Validamos que la reserva exista llamando al otro microservicio

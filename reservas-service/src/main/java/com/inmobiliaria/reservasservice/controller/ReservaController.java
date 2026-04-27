@@ -24,19 +24,9 @@ public class ReservaController {
         return reservaServ.getReservas();
     }
 
-    @GetMapping("/{id}")
-    public Reserva buscarReservaPorId(@PathVariable Long id) {
-        return reservaServ.getReservas().stream()
-                .filter(r -> r.getId().equals(id))
-                .findFirst()
-                .orElse(null);
-    }
-
-    // En ReservaController de reservas-service
+    // ✅ Un solo endpoint GET /{id} — usa findReserva() del service
     @GetMapping("/{id}")
     public Reserva getReserva(@PathVariable Long id) {
-        // Lógica para retornar la reserva por ID
         return reservaServ.findReserva(id);
     }
-
 }

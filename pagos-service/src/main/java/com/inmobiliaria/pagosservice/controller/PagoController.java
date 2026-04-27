@@ -1,7 +1,7 @@
 package com.inmobiliaria.pagosservice.controller;
 
 import com.inmobiliaria.pagosservice.model.Pago;
-import com.inmobiliaria.pagosservice.service.PagoService;
+import com.inmobiliaria.pagosservice.service.PagoService.PagoService; // ✅ corregido
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
