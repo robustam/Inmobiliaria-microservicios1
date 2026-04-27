@@ -7,6 +7,8 @@ import com.inmobiliaria.pagosservice.repository.client.IReservaClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PagoService {
 
@@ -29,5 +31,9 @@ public class PagoService {
         pagoRepo.save(pago);
 
         return "Pago de $" + pago.getMonto() + " procesado con éxito para la reserva #" + reserva.getId();
+    }
+
+    public List<Pago> listarTodos() {
+        return pagoRepo.findAll();
     }
 }
