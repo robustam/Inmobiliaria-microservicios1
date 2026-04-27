@@ -20,7 +20,7 @@
         </processorPath>
         <module name="propiedad-service" />
       </profile>
-      <profile name="Annotation profile for usuario-service" enabled="true">
+      <profile name="Annotation profile for reservas-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -28,6 +28,7 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
         </processorPath>
         <module name="usuario-service" />
+        <module name="reservas-service" />
       </profile>
     </annotationProcessing>
   </component>
@@ -36,6 +37,7 @@
       <module name="api-gateway" options="-parameters" />
       <module name="eureka-server" options="-parameters" />
       <module name="propiedad-service" options="-parameters" />
+      <module name="reservas-service" options="-parameters" />
       <module name="usuario-service" options="-parameters" />
     </option>
   </component>
