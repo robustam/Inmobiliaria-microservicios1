@@ -1,4 +1,4 @@
-package com.inmobiliaria.pagosservice.service.PagoService;
+package com.inmobiliaria.pagosservice.service;
 
 import com.inmobiliaria.pagosservice.dto.ReservaDTO;
 import com.inmobiliaria.pagosservice.model.Pago;
