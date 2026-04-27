@@ -1,9 +1,10 @@
 package com.inmobiliaria.reservasservice.dto;
+
 import lombok.Data;
 
 @Data
 public class PropiedadDTO {
     private Long id;
     private String direccion;
-    private Double precio;
+    private Double precio; // ✅ Double (wrapper) consistente con el modelo Propiedad
 }
