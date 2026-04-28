@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 public class ValidarPromocionRequest {
-
+    
     private String codigo;
     private BigDecimal montoReserva;
     private Long idUsuario;

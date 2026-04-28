@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class CrearPromocionRequest {
-
+    
     private String codigo;
     private String descripcion;
     private TipoDescuento tipo;

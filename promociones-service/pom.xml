@@ -11,7 +11,7 @@
 	<groupId>com.inmobiliaria</groupId>
 	<artifactId>promociones-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<n>promociones-service</n>
+	<name>promociones-service</name>
 	<description>Microservicio para la gestión de promociones y descuentos.</description>
 	<properties>
 		<java.version>21</java.version>

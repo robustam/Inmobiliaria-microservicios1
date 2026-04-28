@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 public class ValidarPromocionResponse {
-
+    
     private String codigo;
     private boolean valido;
     private String mensaje;
