@@ -14,6 +14,7 @@
         <option value="$PROJECT_DIR$/opiniones-service/pom.xml" />
         <option value="$PROJECT_DIR$/notificaciones-service/pom.xml" />
         <option value="$PROJECT_DIR$/notificaciones-service/promociones-service/pom.xml" />
+        <option value="$PROJECT_DIR$/promociones-service/pom.xml" />
       </list>
     </option>
   </component>
