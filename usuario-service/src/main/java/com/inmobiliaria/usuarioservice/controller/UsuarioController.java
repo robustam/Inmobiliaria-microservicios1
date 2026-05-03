@@ -25,7 +25,6 @@ public class UsuarioController {
         return repository.findAll();
     }
 
-    // ✅ ENDPOINT NUEVO — requerido por reservas-service via Feign
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> buscarPorId(@PathVariable Long id) {
         return repository.findById(id)
