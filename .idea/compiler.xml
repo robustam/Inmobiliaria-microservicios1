@@ -13,25 +13,38 @@
         <module name="eureka-server" />
         <module name="promociones-service" />
       </profile>
-      <profile name="Annotation profile for usuario-service" enabled="true">
+      <profile name="Annotation profile for visita-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.34/lombok-1.18.34.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.34/lombok-1.18.34.jar" />
         </processorPath>
         <module name="usuario-service" />
-        <module name="reservas-service" />
         <module name="propiedad-service" />
+        <module name="contrato-service" />
+        <module name="auth-service" />
         <module name="pagos-service" />
+        <module name="mantenimiento-service" />
+        <module name="reservas-service" />
+        <module name="documento-service" />
+        <module name="visita-service" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="notificacion-service" target="17" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="api-gateway" options="-parameters" />
+      <module name="auth-service" options="-parameters" />
+      <module name="contrato-service" options="-parameters" />
+      <module name="documento-service" options="-parameters" />
       <module name="eureka-server" options="-parameters" />
+      <module name="mantenimiento-service" options="-parameters" />
+      <module name="notificacion-service" options="-parameters" />
       <module name="notificaciones-service" options="-parameters" />
       <module name="opiniones-service" options="-parameters" />
       <module name="pagos-service" options="-parameters" />
@@ -39,6 +52,7 @@
       <module name="propiedad-service" options="-parameters" />
       <module name="reservas-service" options="-parameters" />
       <module name="usuario-service" options="-parameters" />
+      <module name="visita-service" options="-parameters" />
     </option>
   </component>
 </project>
