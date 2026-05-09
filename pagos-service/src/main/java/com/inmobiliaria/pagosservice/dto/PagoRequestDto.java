@@ -1,16 +1,10 @@
-package com.inmobiliaria.pagosservice.model;
+package com.inmobiliaria.pagosservice.dto;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
-@Entity
 @Data
-public class Pago {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idPago;
+public class PagoRequestDto {
 
     @NotNull(message = "El ID de reserva es obligatorio")
     private Long idReserva;
@@ -21,6 +15,4 @@ public class Pago {
 
     @NotBlank(message = "El método de pago es obligatorio")
     private String metodoPago;
-
-    private String estado;
 }

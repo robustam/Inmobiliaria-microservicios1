@@ -6,11 +6,12 @@ import com.inmobiliaria.reservasservice.model.Reserva;
 import com.inmobiliaria.reservasservice.repository.IReservaRepository;
 import com.inmobiliaria.reservasservice.repository.client.IPropiedadClient;
 import com.inmobiliaria.reservasservice.repository.client.IUsuarioClient;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
+@Slf4j
 @Service
 public class ReservaService implements IReservaService {
 
@@ -18,30 +19,26 @@ public class ReservaService implements IReservaService {
     private IReservaRepository reservaRepo;
 
     @Autowired
-    private IUsuarioClient usuarioClient; // El puente a Usuarios
+    private IUsuarioClient usuarioClient;
 
     @Autowired
-    private IPropiedadClient propiedadClient; // El puente a Propiedades
+    private IPropiedadClient propiedadClient;
 
     @Override
-    public String saveReserva(Reserva reserva) {
-
-        // 1. Validamos si el Usuario existe llamando al otro microservicio
+    public Reserva saveReserva(Reserva reserva) {
+        log.info("Validando usuario ID: {}", reserva.getIdUsuario());
         UsuarioDTO user = usuarioClient.buscarUsuario(reserva.getIdUsuario());
 
-        // 2. Validamos si la Propiedad existe llamando al otro microservicio
+        log.info("Validando propiedad ID: {}", reserva.getIdPropiedad());
         PropiedadDTO prop = propiedadClient.buscarPropiedad(reserva.getIdPropiedad());
 
-        // 3. Lógica de seguridad
-        if (user == null) return "Error: El usuario no existe.";
-        if (prop == null) return "Error: La propiedad no existe.";
+        if (user == null) throw new RuntimeException("Error: El usuario no existe.");
+        if (prop == null) throw new RuntimeException("Error: La propiedad no existe.");
 
-        // 4. Si todo está bien, guardamos
         reserva.setEstado("CONFIRMADA");
-        reservaRepo.save(reserva);
-
-        return "Reserva confirmada para " + user.getNombre() +
-                " en la propiedad: " + prop.getDireccion();
+        Reserva saved = reservaRepo.save(reserva);
+        log.info("Reserva creada ID: {} para usuario: {}", saved.getId(), user.getNombre());
+        return saved;
     }
 
     @Override
@@ -51,8 +48,6 @@ public class ReservaService implements IReservaService {
 
     @Override
     public Reserva findReserva(Long id) {
-        // Buscamos por ID, si no existe devolvemos null
         return reservaRepo.findById(id).orElse(null);
     }
-
 }

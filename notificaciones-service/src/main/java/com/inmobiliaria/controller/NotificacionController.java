@@ -1,5 +1,6 @@
 package com.inmobiliaria.notificacionesservice.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import com.inmobiliaria.notificacionesservice.dto.EnviarNotificacionRequest;
 import com.inmobiliaria.notificacionesservice.dto.NotificacionResponse;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/notificaciones")
 public class NotificacionController {
@@ -17,56 +19,48 @@ public class NotificacionController {
     @Autowired
     private NotificacionService notificacionService;
 
-    /**
-     * Endpoint para enviar una notificación
-     * POST /api/notificaciones/enviar
-     */
     @PostMapping("/enviar")
     public ResponseEntity<NotificacionResponse> enviarNotificacion(
             @RequestBody EnviarNotificacionRequest request) {
+        log.info("POST /api/notificaciones/enviar - Usuario: {}, Tipo: {}", request.getIdUsuario(), request.getTipo());
         NotificacionResponse response = notificacionService.enviarNotificacion(request);
+        log.info("Notificación enviada exitosamente ID: {}", response.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    /**
-     * Endpoint para obtener una notificación por ID
-     * GET /api/notificaciones/{id}
-     */
     @GetMapping("/{id}")
-    public ResponseEntity<Notificacion> obtenerNotificacion(@PathVariable Long id) {
-        Notificacion notificacion = notificacionService.obtenerNotificacion(id);
-        return ResponseEntity.ok(notificacion);
+    public ResponseEntity<?> obtenerNotificacion(@PathVariable Long id) {
+        log.info("GET /api/notificaciones/{}", id);
+        try {
+            Notificacion notificacion = notificacionService.obtenerNotificacion(id);
+            if (notificacion == null) {
+                log.error("Notificación ID {} no encontrada", id);
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(notificacion);
+        } catch (Exception e) {
+            log.error("Error al obtener notificación ID {}: {}", id, e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    /**
-     * Endpoint para obtener todas las notificaciones de un usuario
-     * GET /api/notificaciones/usuario/{idUsuario}
-     */
     @GetMapping("/usuario/{idUsuario}")
-    public ResponseEntity<List<Notificacion>> obtenerNotificacionesPorUsuario(
-            @PathVariable Long idUsuario) {
+    public ResponseEntity<List<Notificacion>> obtenerNotificacionesPorUsuario(@PathVariable Long idUsuario) {
+        log.info("GET /api/notificaciones/usuario/{}", idUsuario);
         List<Notificacion> notificaciones = notificacionService.obtenerNotificacionesPorUsuario(idUsuario);
+        log.debug("Total notificaciones para usuario {}: {}", idUsuario, notificaciones.size());
         return ResponseEntity.ok(notificaciones);
     }
 
-    /**
-     * Endpoint para obtener todas las notificaciones de una reserva
-     * GET /api/notificaciones/reserva/{idReserva}
-     */
     @GetMapping("/reserva/{idReserva}")
-    public ResponseEntity<List<Notificacion>> obtenerNotificacionesPorReserva(
-            @PathVariable Long idReserva) {
-        List<Notificacion> notificaciones = notificacionService.obtenerNotificacionesPorReserva(idReserva);
-        return ResponseEntity.ok(notificaciones);
+    public ResponseEntity<List<Notificacion>> obtenerNotificacionesPorReserva(@PathVariable Long idReserva) {
+        log.info("GET /api/notificaciones/reserva/{}", idReserva);
+        return ResponseEntity.ok(notificacionService.obtenerNotificacionesPorReserva(idReserva));
     }
 
-    /**
-     * Endpoint para obtener todas las notificaciones
-     * GET /api/notificaciones
-     */
     @GetMapping
     public ResponseEntity<List<Notificacion>> obtenerTodasLasNotificaciones() {
-        List<Notificacion> notificaciones = notificacionService.obtenerTodasLasNotificaciones();
-        return ResponseEntity.ok(notificaciones);
+        log.info("GET /api/notificaciones - Listando todas");
+        return ResponseEntity.ok(notificacionService.obtenerTodasLasNotificaciones());
     }
 }

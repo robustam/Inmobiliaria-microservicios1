@@ -1,14 +1,11 @@
 package com.inmobiliaria.propiedadservice.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Entidad Propiedad para la persistencia en base de datos.
- * Esta clase se mapea con la tabla 'propiedades'.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,29 +13,23 @@ import lombok.NoArgsConstructor;
 @Table(name = "propiedades")
 public class Propiedad {
 
-    /**
-     * Identificador único de la propiedad.
-     * Se genera automáticamente por la base de datos.
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /**
-     * Dirección física de la propiedad.
-     */
+    @NotBlank(message = "La dirección es obligatoria")
+    @Size(min = 5, max = 200, message = "La dirección debe tener entre 5 y 200 caracteres")
     @Column(nullable = false, length = 200)
     private String direccion;
 
-    /**
-     * Número de habitaciones de la propiedad.
-     */
+    @NotNull(message = "El número de habitaciones es obligatorio")
+    @Min(value = 1, message = "Debe tener al menos 1 habitación")
+    @Max(value = 20, message = "No puede tener más de 20 habitaciones")
     @Column(nullable = false)
     private Integer habitaciones;
 
-    /**
-     * Precio de alquiler mensual en moneda local.
-     */
+    @NotNull(message = "El precio es obligatorio")
+    @DecimalMin(value = "0.0", inclusive = false, message = "El precio debe ser mayor a 0")
     @Column(nullable = false, columnDefinition = "DECIMAL(10,2)")
     private Double precio;
 }

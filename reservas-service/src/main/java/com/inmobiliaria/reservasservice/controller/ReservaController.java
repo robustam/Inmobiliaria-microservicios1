@@ -13,33 +13,38 @@ import java.util.List;
 @RequestMapping("/api/reservas")
 public class ReservaController {
 
-    @Autowired private IReservaService reservaServ;
+    @Autowired
+    private IReservaService reservaServ;
 
     @PostMapping("/crear")
-    public String crearReserva(@RequestBody Reserva reserva) {
+    public ResponseEntity<?> crearReserva(@RequestBody Reserva reserva) {
         log.info("POST /api/reservas/crear - Usuario: {}, Propiedad: {}", reserva.getIdUsuario(), reserva.getIdPropiedad());
-        String resultado = reservaServ.saveReserva(reserva);
-        log.info("Resultado: {}", resultado);
-        return resultado;
+        try {
+            Reserva saved = reservaServ.saveReserva(reserva);
+            log.info("Reserva creada ID: {}", saved.getId());
+            return ResponseEntity.ok(saved);
+        } catch (Exception e) {
+            log.error("Error al crear reserva: {}", e.getMessage());
+            return ResponseEntity.status(500).body(
+                    java.util.Map.of("error", e.getMessage(), "status", 500)
+            );
+        }
     }
 
     @GetMapping("/listar")
     public List<Reserva> listarReservas() {
-        log.info("GET /api/reservas/listar - Listando reservas");
-        List<Reserva> reservas = reservaServ.getReservas();
-        log.debug("Total reservas: {}", reservas.size());
-        return reservas;
+        log.info("GET /api/reservas/listar");
+        return reservaServ.getReservas();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Reserva> getReserva(@PathVariable Long id) {
-        log.info("GET /api/reservas/{} - Buscando reserva", id);
+        log.info("GET /api/reservas/{}", id);
         Reserva reserva = reservaServ.findReserva(id);
         if (reserva == null) {
-            log.error("Reserva con ID {} no encontrada", id);
+            log.error("Reserva ID {} no encontrada", id);
             return ResponseEntity.notFound().build();
         }
-        log.info("Reserva encontrada: ID {}", reserva.getId());
         return ResponseEntity.ok(reserva);
     }
 }
