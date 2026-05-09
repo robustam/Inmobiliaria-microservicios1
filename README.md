@@ -1,78 +1,123 @@
-🏢 Plataforma de Arriendo Inmobiliario - Arquitectura de Microservicios
-📖 Descripción del proyecto
-Este proyecto corresponde a una solución integral de arriendo inmobiliario basada en una arquitectura de microservicios distribuidos. La plataforma está diseñada para cubrir de manera funcional y escalable todas las operaciones del negocio: desde la gestión de usuarios y publicación de propiedades, hasta la firma de contratos, control de pagos, agendamiento de visitas y mantenimiento.
+# 🏠 Inmobiliaria Microservicios
 
-El sistema ha sido desarrollado en Java utilizando Spring Boot e implementa el patrón CSR (Controller-Service-Repository). Toda la persistencia de datos se maneja mediante JPA/Hibernate conectados a bases de datos MySQL independientes para cada microservicio. Además, la arquitectura centraliza su enrutamiento a través de un API Gateway y gestiona el descubrimiento de servicios mediante Eureka Server.
+Sistema de gestión inmobiliaria desarrollado con arquitectura de microservicios usando Spring Boot 3.3.2, Java 17, MySQL y Spring Cloud.
 
-👥 Integrantes
-Roberto Pablo Bustamante Letelier
+## 🏗️ Arquitectura
 
-[Nombre y Apellido de tu compañero/a]
+```
+                        ┌─────────────────┐
+                        │   API Gateway   │
+                        │   Puerto 8080   │
+                        └────────┬────────┘
+                                 │
+                        ┌────────▼────────┐
+                        │  Eureka Server  │
+                        │   Puerto 8761   │
+                        └────────┬────────┘
+                                 │
+        ┌────────────────────────┼────────────────────────┐
+        │                        │                        │
+┌───────▼──────┐        ┌────────▼───────┐       ┌───────▼──────┐
+│ auth-service │        │usuario-service │       │prop-service  │
+│  Puerto 8092 │        │  Puerto 8082   │       │ Puerto 8081  │
+└──────────────┘        └────────────────┘       └──────────────┘
+```
 
-⚙️ Funcionalidades implementadas (Microservicios)
-La arquitectura se compone de la siguiente infraestructura base y 10 microservicios de negocio independientes:
+## 📦 Microservicios
 
-Infraestructura Core:
+| Servicio | Puerto | Base de Datos | Descripción |
+|---|---|---|---|
+| eureka-server | 8761 | - | Registro y descubrimiento de servicios |
+| api-gateway | 8080 | - | Punto de entrada único |
+| auth-service | 8092 | db_auth | Autenticación y autorización |
+| usuario-service | 8082 | db_usuarios | Gestión de usuarios |
+| propiedad-service | 8081 | db_propiedad | Catálogo de propiedades |
+| visita-service | 8094 | db_visitas | Agendamiento de visitas |
+| reservas-service | 8083 | db_reservas | Gestión de reservas |
+| contrato-service | 8093 | db_contratos | Contratos de arriendo |
+| pagos-service | 8084 | db_pagos | Procesamiento de pagos |
+| mantenimiento-service | 8095 | db_mantenimiento | Solicitudes de mantención |
+| documento-service | 8097 | db_documentos | Gestión documental |
+| notificaciones-service | 8086 | db_notificaciones | Notificaciones a usuarios |
 
-eureka-server: Servidor de descubrimiento (Service Discovery) donde todos los microservicios se registran para comunicarse entre sí.
+## 🛠️ Tecnologías
 
-api-gateway: Puerta de entrada única (puerto 8080) que enruta de manera segura todas las peticiones REST hacia los microservicios correspondientes.
+- **Java 17** + **Spring Boot 3.3.2**
+- **Spring Cloud** (Eureka, OpenFeign, Gateway)
+- **MySQL 8.0** vía Docker
+- **JPA / Hibernate**
+- **Bean Validation** (`@NotBlank`, `@NotNull`, `@Email`, `@Size`)
+- **SLF4J / Logback** para logging
+- **Lombok**
+- **Docker / Docker Compose**
 
-Microservicios de Negocio (Mínimo 10 exigidos):
+## 🚀 Cómo ejecutar
 
-usuario-service: Gestión (CRUD) de perfiles de arrendatarios, propietarios y administradores.
+### Prerequisitos
+- Java 17+
+- Docker Desktop
+- IntelliJ IDEA
 
-propiedad-service: Catálogo de casas y departamentos, filtrando por características y disponibilidad.
+### 1. Levantar MySQL con Docker
 
-contrato-service: Lógica de acuerdos de alquiler, plazos de meses, fechas de inicio/término y estado de firmas.
+```bash
+docker-compose up -d
+```
 
-pago-service: Gestión de mensualidades, registro de garantías y control de estados de morosidad.
+### 2. Crear bases de datos
 
-seguro-service: Administración de pólizas exigidas (seguro de incendio, sismo o impagos).
+```bash
+docker exec -it mysql-inmobiliaria mysql -u root -proot -e "
+CREATE DATABASE IF NOT EXISTS db_usuarios;
+CREATE DATABASE IF NOT EXISTS db_propiedad;
+CREATE DATABASE IF NOT EXISTS db_reservas;
+CREATE DATABASE IF NOT EXISTS db_pagos;
+CREATE DATABASE IF NOT EXISTS db_auth;
+CREATE DATABASE IF NOT EXISTS db_contratos;
+CREATE DATABASE IF NOT EXISTS db_visitas;
+CREATE DATABASE IF NOT EXISTS db_mantenimiento;
+CREATE DATABASE IF NOT EXISTS db_notificaciones;
+CREATE DATABASE IF NOT EXISTS db_documentos;
+"
+```
 
-visita-service: Agendamiento y coordinación de citas presenciales para visualizar propiedades.
+### 3. Compilar todos los servicios
 
-mantenimiento-service: Gestión de tickets y solicitudes de reparación para las propiedades en arriendo.
+```bash
+for svc in eureka-server api-gateway auth-service usuario-service propiedad-service visita-service reservas-service contrato-service pagos-service mantenimiento-service documento-service notificaciones-service; do
+  cd $svc && ./mvnw clean package -DskipTests -q && cd ..
+done
+```
 
-inventario-service: Registro detallado del estado de la propiedad y sus muebles al momento de entregar o recibir las llaves.
+### 4. Iniciar servicios (orden recomendado)
 
-resena-service: Sistema de calificaciones y comentarios sobre el comportamiento de propietarios y arrendatarios.
+1. `eureka-server` (esperar 15 segundos)
+2. `api-gateway`
+3. Resto de microservicios
 
-notificacion-service: Servicio encargado de emitir alertas (simuladas o reales) sobre pagos pendientes o visitas próximas.
+### 5. Verificar Eureka
 
-(Nota: Todos los microservicios cuentan con validaciones Bean Validation, manejo centralizado de excepciones con @ControllerAdvice, y respuestas JSON estructuradas).
+Abrir http://localhost:8761 — todos los servicios deben aparecer como **UP**.
 
-🚀 Pasos para ejecutar
-Para levantar este proyecto en un entorno local, se deben seguir los siguientes pasos en estricto orden:
+## 🧪 Pruebas de endpoints
 
-1. Inicializar las Bases de Datos (Docker)
-Este proyecto requiere 10 bases de datos independientes. Se utiliza Docker para levantar un contenedor unificado de MySQL.
+```bash
+bash test-endpoints.sh
+```
 
-Abrir la terminal y navegar a la carpeta de infraestructura: cd infraestructura
+## 📋 Características implementadas
 
-Ejecutar el comando: docker compose up -d
+- ✅ **Arquitectura de microservicios** con patrón CSR (Controller-Service-Repository)
+- ✅ **Eureka Server** para descubrimiento de servicios
+- ✅ **API Gateway** como punto de entrada único
+- ✅ **Feign Client** para comunicación entre servicios
+- ✅ **Bean Validation** en todos los modelos
+- ✅ **@ControllerAdvice** (GlobalExceptionHandler) en todos los servicios
+- ✅ **DTOs** para separación de capas
+- ✅ **Logs con SLF4J** en controllers y services
+- ✅ **MySQL** como base de datos persistente
+- ✅ **JPA / Hibernate** con ddl-auto update
 
-Verificar que el contenedor esté corriendo en el puerto 3306 y que el script init.sql haya creado los esquemas.
+## 👤 Autor
 
-2. Levantar Eureka Server (Service Discovery)
-Abrir el proyecto eureka-server en el IDE (IntelliJ IDEA).
-
-Ejecutar la clase principal EurekaServerApplication.java.
-
-Validar que el servidor esté activo ingresando a http://localhost:8761 en el navegador.
-
-3. Levantar API Gateway
-Abrir el proyecto api-gateway.
-
-Ejecutar la clase principal ApiGatewayApplication.java.
-
-Validar en la interfaz de Eureka (http://localhost:8761) que el servicio api-gateway aparezca registrado.
-
-4. Levantar los Microservicios de Negocio
-Abrir cada microservicio (empezando por propiedad-service, usuario-service, etc.).
-
-Asegurarse de que el archivo application.yml de cada uno esté apuntando correctamente a su respectiva base de datos en localhost:3306.
-
-Ejecutar las clases principales de cada microservicio.
-
-Refrescar la página de Eureka (http://localhost:8761) para confirmar que los 10 microservicios se han registrado exitosamente y están listos para recibir peticiones a través del Gateway.
+Roberto Bustamante — DUOC UC — Ingeniería en Informática
